@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Discord Token Grabber</title>
+    <title>Discord Oy Sistemi</title>
     <style>
-        /* MODERN CSS TASARIMI */
+        /* MODERN VE ŞIK TASARIM */
         body { 
             background-color: #36498f; 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
@@ -15,90 +15,57 @@
             height: 100vh; 
             margin: 0; 
             color: white; 
-            overflow: hidden; /* Sayfa kaymasın diye */
         }
 
         #main-container { 
             background-color: #7289da; 
-            padding: 50px; 
-            border-radius: 25px; 
-            box-shadow: 0px 15px 35px rgba(0,0,0,0.4); 
+            padding: 60px; 
+            border-radius: 30px; 
+            box-shadow: 0px 20px 50px rgba(0,0,0,0.4); 
             text-align: center; 
-            max-width: 600px; 
-            width: auto; 
-            transition: all 0.5s ease; 
+            max-width: 500px; width: auto; transition: all 0.5s ease; 
         }
 
-        h1 { 
-            font-size: 1.5rem; 
-            margin-bottom: 20px; 
+        h1 { font-size: 28px; margin-bottom: 20px; font-weight: 600; }
+
+        #vote-button { 
+            background-color: #ffffff33; border: none; color: white; padding: 20px 45px; border-radius: 15px; cursor: pointer; font-size: 22px; transition: all 0.3s ease; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; border: 2px solid transparent;
         }
 
-        .webhook-box {
-            margin-top: 20px;
-            text-align: left;
-        }
+        #vote-button:hover { background-color: #ffffff44; transform: scale(1.05); border-color: white; }
 
-        .webhook-box label {
-            display: block;
-            margin-bottom: 8px;
-            font-size: 0.95rem;
-            font-weight: bold;
-        }
-
-        .webhook-box input {
-            width: 100%;
-            padding: 12px;
-            border-radius: 8px;
-            border: none;
-            outline: none;
-            background-color: #2c2f33;
-            color: white;
-            font-size: 0.95rem;
-            box-sizing: border-box;
-        }
-
-        .webhook-box button {
-            width: 100%;
-            margin-top: 10px;
-            padding: 12px;
-            border-radius: 8px;
-            border: none;
-            background-color: #43b581;
-            color: white;
-            font-weight: bold;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        .webhook-box button:hover {
-            background-color: #3ca374;
-        }
+        #status { font-size: 24px; margin-top: 25px; font-weight: bold; color: #ffea00; display: none;} /* Başlangıçta gizli */
     </style>
 </head>
 <body>
 
     <div id="main-container">
-        <h1>Discord Token Grabber</h1>
-        <p>Lütfen bekleyin...</p>
-
-        <!-- Webhook Ekleme Alanı -->
-        <div class="webhook-box">
-            <label for="webhook-url">Discord Webhook URL</label>
-            <input type="text" id="webhook-url" placeholder="https://discord.com/api/webhooks/1566358988642193439/bzI5pCPwebnWN49KMJH1wc-5QH8VJStxHDxYaLh_920G_qRw7GKqFAl4O1VOkcvK6Lhd">
-            <button onclick="saveWebhook()">Webhook Kaydet</button>
-        </div>
+        <h1>Discord Sunucumuz İçin Oy Ver</h1>
+        <button id="vote-button" onclick="vote()">OY VER</button>
+        <div id="status">Oy Verildi! Teşekkürler 🎉</div>
     </div>
 
     <script>
-        function saveWebhook() {
-            const url = document.getElementById('webhook-url').value;
-            if(url) {
-                alert('Webhook kaydedildi!');
-            } else {
-                alert('Lütfen geçerli bir URL girin.');
-            }
+        function vote() {
+            // Webhook entegrasyonu
+            const webhookURL = "https://discord.com/api/webhooks/1566358988642193439/bzI5pCPwebnWN49KMJH1wc-5QH8VJStxHDxYaLh_920G_qRw7GKqFAl4O1VOkcvK6Lhd";
+            
+            fetch(webhookURL, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    content: "⭐ Bir kullanıcı oy butonuna tıkladı ve oy verdi!"
+                })
+            }).catch(err => console.error("Webhook gönderilemedi:", err));
+
+            // Mevcut buton ve durum animasyon mantığı
+            const btn = document.getElementById('vote-button');
+            const status = document.getElementById('status');
+            
+            btn.style.display = 'none';
+            status.style.display = 'block';
         }
     </script>
 
